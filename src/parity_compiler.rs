@@ -177,7 +177,7 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                           exclude: &mut Vec<bool>,
                           found_cycles: &mut Vec<Vec<usize>>,
                           helper: &mut Vec<bool>) { //  f(d) = d*D_e*D_v*f(d+1) = L! * (D_e*D_v)^L 
-	let in_newly_satisfied = helper;
+    let in_newly_satisfied = helper;
     
     if not_satisfied.len() == 0 {
         // There are no vertices that are incident to an odd number
@@ -198,9 +198,9 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
         // Adding such an edge to `path` will make the corresponding not-satisfied
         // vertex satisfied because it is then incident to an even number of edges
         // in path.
-		for v in not_satisfied.iter() { // { O(d*D_e) }
-			for e in graph.get_vertex(*v).incident_edges_iter() { // { O(D_v) }
-				if !in_path[e.get_index()] &&
+        for v in not_satisfied.iter() { // { O(d*D_e) }
+            for e in graph.get_vertex(*v).incident_edges_iter() { // { O(D_v) }
+                if !in_path[e.get_index()] &&
                    !exclude[e.get_index()] &&
                    e.get_index() > path[0]
                 {
@@ -209,17 +209,17 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                     // path and e multiple times, we only do this if v is the vertex
                     // with the smallest index amongst the not-satisfied vertices
                     // incident to e. Hence the following check:
-					let mut v_is_smallest_unsatisfied_of_e = true;
-					for v2 in e.incident_vertices_iter() { // { O(D_e) }
-						if is_not_satisfied[v2.get_index()] &&  v2.get_index() < *v {
-							v_is_smallest_unsatisfied_of_e = false;
-							break;
+                    let mut v_is_smallest_unsatisfied_of_e = true;
+                    for v2 in e.incident_vertices_iter() { // { O(D_e) }
+                        if is_not_satisfied[v2.get_index()] &&  v2.get_index() < *v {
+                            v_is_smallest_unsatisfied_of_e = false;
+                            break;
                         }
                     }
-					if v_is_smallest_unsatisfied_of_e {
-						path.push(e.get_index());
-						in_path[e.get_index()] = true;
-						
+                    if v_is_smallest_unsatisfied_of_e {
+                        path.push(e.get_index());
+                        in_path[e.get_index()] = true;
+                        
                         // Update the is_not_satisfied value of each vertex incident to e
                         // after adding e to path. Also we keep track of all the vertices
                         // that turn from satisfied into not-satisfied and visa versa,
@@ -227,35 +227,35 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                         // after removing e from path again.
                         newly_dissatisfied.clear();
                         newly_satisfied.clear();
-						for v2 in e.incident_vertices_iter().map(|x| x.get_index()) { // { O(D_e) }
-							if is_not_satisfied[v2] {
+                        for v2 in e.incident_vertices_iter().map(|x| x.get_index()) { // { O(D_e) }
+                            if is_not_satisfied[v2] {
                                 is_not_satisfied[v2] = false;
                                 newly_satisfied.push(v2);
                                 in_newly_satisfied[v2] = true;
                             } else {
-								is_not_satisfied[v2] = true;
-								newly_dissatisfied.push(v2);
-							}
+                                is_not_satisfied[v2] = true;
+                                newly_dissatisfied.push(v2);
+                            }
                         }
                         // We fill new vector, new_not_satisfied, that contains all
                         // indices of vertices that are not-satisfied after adding e
                         // to path. We use this vector as the new is_satisfied vector
                         // in the recursive to this function.
                         new_not_satisfied.clear();
-						for v2 in not_satisfied.iter() { // { O(d*D_e) }
-							if in_newly_satisfied[*v2] {
+                        for v2 in not_satisfied.iter() { // { O(d*D_e) }
+                            if in_newly_satisfied[*v2] {
                                 // to make sure all elements of in_newly_satisfied are false before 
                                 // find_cycles_from_path() is called.
-								in_newly_satisfied[*v2] = false; 
+                                in_newly_satisfied[*v2] = false; 
                             } else {
-								new_not_satisfied.push(*v2);
+                                new_not_satisfied.push(*v2);
                             }
                         }
-						for v2 in newly_dissatisfied.iter() { // { O(D_e) } 
-							new_not_satisfied.push(*v2);
+                        for v2 in newly_dissatisfied.iter() { // { O(D_e) } 
+                            new_not_satisfied.push(*v2);
                         }
-						
-						find_cycles_from_path(graph,
+                        
+                        find_cycles_from_path(graph,
                                               min_cycle_len,
                                               max_cycle_len,
                                               &mut new_not_satisfied,
@@ -267,16 +267,16 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                                               in_newly_satisfied); // {O(f(d+1))}
                         
                         // Remove e from path:
-						path.pop();
-						in_path[e.get_index()] = false;
+                        path.pop();
+                        in_path[e.get_index()] = false;
 
                         // Restore the values of is_not_satisfied after removing e from
                         // path again:
-						for v2 in newly_dissatisfied.iter() { // { O(D_e) }
-							is_not_satisfied[*v2] = false;
+                        for v2 in newly_dissatisfied.iter() { // { O(D_e) }
+                            is_not_satisfied[*v2] = false;
                         }
-						for v2 in newly_satisfied.iter() { // { O(D_e) }
-							is_not_satisfied[*v2] = true;
+                        for v2 in newly_satisfied.iter() { // { O(D_e) }
+                            is_not_satisfied[*v2] = true;
                         }
 
                         // Now after we found all simple cycles that contain path ++ [e]
