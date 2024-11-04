@@ -24,8 +24,14 @@ use na::base::{Matrix, DMatrix};
 /// # Arguments
 /// * `m` - Used as the input matrix and the resulting output matrix as the
 ///         computation is done in place.
+/// 
+/// # Complexity
+/// This function has time complexity of *O(rc<sup>2</sup>)* where *c* and *r* are
+/// number of columns and rows respectively of `m`. The memory complexity is *O(c)*.
+/// 
 /// # Note
-/// A more memory and computationallity efficient could be acchieved as follows:
+/// A more memory and computationally efficient implementation could be acchieved
+/// as follows:
 /// * Group the elements of each row into groups of size W, where W is the number
 ///   of bits in a word for the specific compute arcitecture.
 /// * Map each element inside a group to the corresponding bit in a word.
@@ -130,6 +136,11 @@ where R: na::Dim,
 /// A matrix of which the columns form basis for the null space of matrix `m`.
 /// As a consequence the number of rows of the resulting matrix equals the number of
 /// columns of `m`, and the number of columns equals the nullity of m.
+/// 
+/// # Complexity
+/// This function has time complexity of *O(rc<sup>2</sup>)* where *c* and *r* are
+/// number of columns and rows respectively of `m`. The memory complexity is *O(cb)*,
+/// where *b* is the nullity of `m`.
 pub fn null_space<R,C,S> (m: &mut Matrix<ZMod2,R,C,S>) -> DMatrix<ZMod2>
 where R: na::Dim,
       C: na::Dim,

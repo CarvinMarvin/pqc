@@ -88,6 +88,14 @@ pub fn extract_parity_constraints (mat_P_transp: &DMatrix<ZMod2>) -> Vec<Vec<usi
 /// # Returns
 /// Returns a vector that contains for each found simple cycle a vector of indices
 /// of the edges belonging to that simple cycle.
+/// 
+/// # Complexity
+/// From a naive time analysis one can find that the time complexity is
+/// *O(E(D<sub>e</sub>D<sub>v</sub>)<sup>L-1</sup>(L-1)! + V)*, where
+/// *L* = `max_cycle_len`, *D<sub>e</sub>* is the maximum edge degree in `graph`,
+/// *D<sub>v</sub>* is the maximum vertex degree in `graph`, *V* is the number of
+/// vertices of `graph` and *E* is the number of edges of `graph`.
+/// The memory complexity is *O(L<sup>2</sup>D<sub>e</sub>D<sub>v</sub> + E + V)*.
 pub fn find_cycles (graph: &SimpleUndirHyperGraph,
                     min_cycle_len: usize,
                     max_cycle_len: usize) -> Vec<Vec<usize>> {
@@ -167,6 +175,13 @@ pub fn find_cycles (graph: &SimpleUndirHyperGraph,
 ///                    that simple cycle.
 /// * `helper` - A helper vector of length `graph.num_vertices()` of which each
 ///              element is `false` before and after calling this function.
+/// 
+/// # Complexity
+/// From a naive time analysis one can find that the time complexity is
+/// *O((D<sub>e</sub>D<sub>v</sub>)<sup>L-d</sup> (L-1)!/(d-1)!)*, where
+/// *L* = `max_cycle_len`, *D<sub>e</sub>* is the maximum edge degree in `graph`,
+/// *D<sub>v</sub>* is the maximum vertex degree in `graph`, and *d* = `path.len()`.
+/// The memory complexity is *O((L-d)<sup>2</sup>D<sub>e</sub>D<sub>v</sub>)*.
 fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                           min_cycle_len: usize,
                           max_cycle_len: usize,
@@ -176,7 +191,7 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
                           in_path: &mut Vec<bool>,
                           exclude: &mut Vec<bool>,
                           found_cycles: &mut Vec<Vec<usize>>,
-                          helper: &mut Vec<bool>) { //  f(d) = d*D_e*D_v*f(d+1) = L! * (D_e*D_v)^L 
+                          helper: &mut Vec<bool>) { //  f(d) = d*D_e*D_v*f(d+1) = (L-1)!/(d-1)! * (D_e*D_v)^(L-d)
     let in_newly_satisfied = helper;
     
     if not_satisfied.len() == 0 {
@@ -317,6 +332,11 @@ fn find_cycles_from_path (graph: &SimpleUndirHyperGraph,
 /// For a definition of the generator matrix *G* and parity check matrix *P*,
 /// see the [Ender et al., "Parity Quantum Optimization: Compiler"](https://doi.org/10.22331/q-2023-03-17-950)
 /// paper.
+/// 
+/// # Complexity
+/// The time complexity of this function is *O(E V<sup>2</sup>)*, where *V* is the
+/// number of vertices of `graph` and *E* is the number of edges of `graph`. The 
+/// memory complexity is *O(E V)*.
 pub fn compute_k_body_constraints_basis (graph: &SimpleUndirHyperGraph) -> (DMatrix<ZMod2>, DMatrix<ZMod2>, Vec<Vec<usize>>)
 {
     
